@@ -1,5 +1,4 @@
-# PROJECT_NAME := omarinio
-PROJECT_NAME := LightingAndShading
+# PROJECT_NAME := LightingAndShading
 PROJECT_NAME := improved
 
 
