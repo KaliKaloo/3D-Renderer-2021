@@ -378,7 +378,7 @@ float phong(RayTriangleIntersection intersect, int scale) {
 
 	vec3 reflection_ray = normalize(lightRay) - (2.0f*interpolatedNormal*dot(glm::normalize(lightRay), interpolatedNormal));
 
-	float brightness = (proximity) ? 50/(4 * pi * length*length) : 0;
+	float brightness = (proximity) ? 50/(4 * pi * length*length) : 1;
     float angleOfIncidence = (angle_of) ? dot(glm::normalize(lightRay), interpolatedNormal) : 1;
 	float spec = (specular) ? pow(dot(normalize(reflection_ray), normalize(cameraRay)), scale) : 0;
 
@@ -444,7 +444,7 @@ void draw_raytrace(vector<ModelTriangle> triangles, float focal, int planeMultip
 
 			if(!isinf(intersect.distanceFromCamera)){
                 float scale = pixelBrightness(intersect, 64);
-                scale = (scale > 0.2) ? scale : 0.2;
+                scale = (scale > 0.3) ? scale : 0.3;
                 if(intersect.intersectedTriangle.colour.name != ""){
                     ModelTriangle t = intersect.intersectedTriangle;
                     //get texture map
@@ -462,17 +462,26 @@ void draw_raytrace(vector<ModelTriangle> triangles, float focal, int planeMultip
                     int r = (t_value >> 16) & 0xff;
                     int g = (t_value >>  8) & 0xff;
                     int b =        t_value  & 0xff;
-                     c = (255 << 24) + (int(r*scale) << 16) + (int(g*scale) << 8) + int(b*scale);
+                    c = (255 << 24) + (int(r*scale) << 16) + (int(g*scale) << 8) + int(b*scale);
+                    
+                    if(is_shadow(intersect, triangles) && shadows) {
+					float shadowScale = 0.2;
+					uint32_t s = (255 << 24) + (int(r*shadowScale) << 16) + (int(g*shadowScale) << 8) + int(b*shadowScale);
+					window.setPixelColour(x,y,s); 
+				    } else window.setPixelColour(x,y,c);
 
-                } else{
+                } 
+                else{
                      c = (255 << 24) + (int(colour.red*scale) << 16) + (int(colour.green*scale) << 8) + int(colour.blue*scale);
+
+                     if(is_shadow(intersect, triangles) && shadows) {
+                        float shadowScale = 0.2;
+                        uint32_t s = (255 << 24) + (int(colour.red*shadowScale) << 16) + (int(colour.green*shadowScale) << 8) + int(colour.blue*shadowScale);
+                        window.setPixelColour(x,y,s); 
+				    } else window.setPixelColour(x,y,c);
                 }
 			
-				if(is_shadow(intersect, triangles) && shadows) {
-					float shadowScale = 0.2;
-					uint32_t s = (255 << 24) + (int(colour.red*shadowScale) << 16) + (int(colour.green*shadowScale) << 8) + int(colour.blue*shadowScale);
-					window.setPixelColour(x,y,s); 
-				} else window.setPixelColour(x,y,c);
+				
 			}
 		}
 	}
@@ -717,8 +726,8 @@ int main(int argc, char *argv[]) {
 	unordered_map<string, Colour> colours;
 	unordered_map<string, TextureMap> textures;
 
-	vector<ModelTriangle> t = load_obj("models/cornell-box.obj", 0.5, load_mtl("models/cornell-box.mtl", textures));
-	// vector<ModelTriangle> t = load_obj("models/textured-cornell-box.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
+	// vector<ModelTriangle> t = load_obj("models/cornell-box-old.obj", 0.5, load_mtl("models/cornell-box-old.mtl", textures));
+	vector<ModelTriangle> t = load_obj("models/textured-cornell-box.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
     
 	// vector<ModelTriangle> t_logo = load_obj("models/logo.obj", 0.002, load_mtl("models/materials.mtl", textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/sphere.obj", 0.4, load_mtl("models/cornell-box-old.mtl",textures));
