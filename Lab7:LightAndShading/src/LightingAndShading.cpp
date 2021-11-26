@@ -161,7 +161,7 @@ void textureTriangle(CanvasTriangle t, TextureMap texture, vector<vector<float>>
             window.setPixelColour(points[i].x, points[i].y, col);
         }  
     }
-	strokedTriangle(t, Colour(255,255,255), depthBuffer, window);
+	// strokedTriangle(t, Colour(255,255,255), depthBuffer, window);
 }
 
 void random_triangle(DrawingWindow &window, int event){

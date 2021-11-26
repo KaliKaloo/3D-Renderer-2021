@@ -1,4 +1,3 @@
-# PROJECT_NAME := LightingAndShading
 PROJECT_NAME := improved
 
 

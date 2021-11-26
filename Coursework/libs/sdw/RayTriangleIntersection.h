@@ -3,7 +3,6 @@
 #include <glm/glm.hpp>
 #include <iostream>
 #include "ModelTriangle.h"
-#include "Colour.h"
 
 struct RayTriangleIntersection {
 	glm::vec3 intersectionPoint;

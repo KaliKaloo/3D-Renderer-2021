@@ -23,11 +23,11 @@ using namespace glm;
 
 #define pi 3.14159265359
 
-vec3   cam(0.0, 0.0, 4.0); // cornell cam
-vec3 light(0.0, 1.0, 2.0); // cornell light 
+// vec3   cam(0.0, 0.0, 4.0); // cornell cam
+// vec3 light(0.0, 1.0, 2.0); // cornell light 
 
-// vec3   cam(0.0, 1.3, 3.5); // sphere cam
-// vec3 light(1.0, 2.0, 2.8); // sphere light
+vec3   cam(0.0, 1.3, 3.5); // sphere cam
+vec3 light(1.0, 2.0, 2.8); // sphere light
 
 mat3 cam_orientation(
 	vec3(1.0,0.0,0.0),
@@ -624,8 +624,8 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 
 int main(int argc, char *argv[]) {
 
-	vector<ModelTriangle> t = parse_obj("models/cornell-box.obj", 0.5, parse_mtl("models/cornell-box.mtl"));
-	// vector<ModelTriangle> t_2 = parse_obj("models/sphere.obj", 0.5, parse_mtl("models/cornell-box.mtl"));
+	// vector<ModelTriangle> t = parse_obj("models/cornell-box.obj", 0.5, parse_mtl("models/cornell-box.mtl"));
+	vector<ModelTriangle> t_2 = parse_obj("models/sphere.obj", 0.5, parse_mtl("models/cornell-box.mtl"));
 	// t.insert(t.end(), t_2.begin(), t_2.end());
 
     float focal = 2.0;
@@ -639,8 +639,8 @@ int main(int argc, char *argv[]) {
 		orbit(orbiting);
 
 		draw(window_grey);
-		drawing(t, focal, planemultiplyer, window_grey); //cornell-box or cornell-box+sphere
-		// drawing(t_2, focal, planemultiplyer, window_grey); //sphere only
+		// drawing(t, focal, planemultiplyer, window_grey); //cornell-box or cornell-box+sphere
+		drawing(t_2, focal, planemultiplyer, window_grey); //sphere only
 
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window_grey.renderFrame();
