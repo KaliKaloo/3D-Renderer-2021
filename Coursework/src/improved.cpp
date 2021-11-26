@@ -443,7 +443,7 @@ void draw_raytrace(vector<ModelTriangle> triangles, float focal, int planeMultip
             uint32_t c;
 
 			if(!isinf(intersect.distanceFromCamera)){
-                float scale = pixelBrightness(intersect, 64);
+                float scale = pixelBrightness(intersect, 256);
                 scale = (scale > 0.3) ? scale : 0.3;
                 if(intersect.intersectedTriangle.colour.name != ""){
                     ModelTriangle t = intersect.intersectedTriangle;
@@ -469,19 +469,16 @@ void draw_raytrace(vector<ModelTriangle> triangles, float focal, int planeMultip
 					uint32_t s = (255 << 24) + (int(r*shadowScale) << 16) + (int(g*shadowScale) << 8) + int(b*shadowScale);
 					window.setPixelColour(x,y,s); 
 				    } else window.setPixelColour(x,y,c);
-
                 } 
                 else{
-                     c = (255 << 24) + (int(colour.red*scale) << 16) + (int(colour.green*scale) << 8) + int(colour.blue*scale);
+                    c = (255 << 24) + (int(colour.red*scale) <<16) + (int(colour.green*scale) << 8) + int(colour.blue*scale);
 
                      if(is_shadow(intersect, triangles) && shadows) {
-                        float shadowScale = 0.2;
-                        uint32_t s = (255 << 24) + (int(colour.red*shadowScale) << 16) + (int(colour.green*shadowScale) << 8) + int(colour.blue*shadowScale);
+                        float shadowScale = 0.6;
+                        uint32_t s = (255 << 24) + (int(colour.red*scale*shadowScale) << 16) + (int(colour.green*scale*shadowScale) << 8) + int(colour.blue*scale*shadowScale);
                         window.setPixelColour(x,y,s); 
 				    } else window.setPixelColour(x,y,c);
-                }
-			
-				
+                }	
 			}
 		}
 	}
@@ -731,6 +728,7 @@ int main(int argc, char *argv[]) {
     
 	// vector<ModelTriangle> t_logo = load_obj("models/logo.obj", 0.002, load_mtl("models/materials.mtl", textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/sphere.obj", 0.4, load_mtl("models/cornell-box-old.mtl",textures));
+	// vector<ModelTriangle> t_sphere = load_obj("models/high-res-sphere.obj", 0.4, load_mtl("models/cornell-box-old.mtl",textures));
 
 	// t.insert(t.end(),t_logo.begin(), t_logo.end());
 	// t.insert(t.end(),t_sphere.begin(), t_sphere.end());
