@@ -11,6 +11,7 @@ struct RayTriangleIntersection {
 	size_t triangleIndex;
 	float u;
 	float v;
+    bool isInfinity = false;
 
 	RayTriangleIntersection();
 	RayTriangleIntersection(const glm::vec3 &point, float distance, const ModelTriangle &triangle, size_t index);
