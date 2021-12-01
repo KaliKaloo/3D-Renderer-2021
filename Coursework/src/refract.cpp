@@ -27,12 +27,11 @@ RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, 
 
 vec3   cam(0.0, 0.0, 4.0); // cornell cam
 vec3 light(0.0, 1.0, 1.0); // cornell light 
-// vec3 light(0.7, 0.8, 2.8); // cornell light +sphere 
 
 // vec3   cam(0.0, 0.0, 2.5); // sphere cam
 // vec3 light(1.0, 2.0, 2.8); // sphere light
 
-// vec3   cam(0.5, 0.5, 1.0); //logo cam
+// vec3   cam(0.5, 0.5, 2.0); //logo cam
 // vec3 light(1.0, 1.0, 2.0);  //logo light
 
 mat3 cam_orientation(
@@ -71,11 +70,9 @@ vector<CanvasPoint> interpolatePoints(CanvasPoint from, CanvasPoint to, int numb
     float xs = (to.x - from.x)/(numberOfValues-1);
     float ys = (to.y - from.y)/(numberOfValues-1);
     float zs = (to.depth - from.depth) / (numberOfValues-1);
-    vector<TexturePoint> texturePoints = interpolatePoints(from.texturePoint, to.texturePoint, numberOfValues);
 
     for(int i=0; i<numberOfValues; i++){
         CanvasPoint cp(round(from.x+(i*xs)), round(from.y+(i*ys)), from.depth + (i*zs));
-        cp.texturePoint = texturePoints[i];
         points.push_back(cp); 
     }
     return points;
@@ -84,7 +81,7 @@ vector<CanvasPoint> interpolatePoints(CanvasPoint from, CanvasPoint to, int numb
 void drawLine(CanvasPoint from, CanvasPoint to, Colour colour, DrawingWindow &window){ 
 
     float numberOfSteps= getNumberOfSteps(from, to);
-    vector<CanvasPoint> points = interpolatePoints(from, to, numberOfSteps+1);
+    vector<CanvasPoint> points = interpolatePoints(from, to, numberOfSteps+2);
 
     for (float i=0.0; i<numberOfSteps; i++){
         if(points[i].x >= 0 && points[i].x < window.width && points[i].y >= 0 && points[i].y < window.height) {
@@ -165,16 +162,16 @@ void filledTriangle(CanvasTriangle triangle, Colour colour,vector<vector<float>>
 
 }
 
-void half_texturedTriangle(CanvasPoint v1, CanvasPoint v2, CanvasPoint split, const TextureMap texture, vector<vector<float>> &depthBuffer, DrawingWindow &window){
+void half_texturedTriangle(CanvasPoint v1, CanvasPoint v2, CanvasPoint midpoint, const TextureMap texture, vector<vector<float>> &depthBuffer, DrawingWindow &window){
 	v1.depth = -1/v1.depth;
 	v2.depth = -1/v2.depth;
-	split.depth = -1/split.depth;
+	midpoint.depth = -1/midpoint.depth;
 
     vector<CanvasPoint> left = interpolatePoints(v1, v2, abs(v2.y-v1.y)+2);
 	vector<TexturePoint> leftTexture = interpolatePoints(v1.texturePoint, v2.texturePoint, abs(v2.y-v1.y)+2);
 
-	vector<CanvasPoint> right = interpolatePoints(v1, split, abs(v2.y-v1.y)+2);
-	vector<TexturePoint> rightTexture = interpolatePoints(v1.texturePoint, split.texturePoint, abs(v2.y-v1.y)+2);
+	vector<CanvasPoint> right = interpolatePoints(v1, midpoint, abs(v2.y-v1.y)+2);
+	vector<TexturePoint> rightTexture = interpolatePoints(v1.texturePoint, midpoint.texturePoint, abs(v2.y-v1.y)+2);
 
 	for (int i = 0; i < left.size(); i++) {
 		int steps = abs(left[i].x - right[i].x);
@@ -207,19 +204,19 @@ void texturedTriangle( CanvasTriangle triangle, const TextureMap texture, vector
 	CanvasPoint mid = triangle.vertices[1];
 	CanvasPoint bot = triangle.vertices[2];
 
-	CanvasPoint split;
-	split.y = mid.y;
-	split.x = round(top.x + ((mid.y - top.y)/(bot.y-top.y)) * (bot.x-top.x));
+	CanvasPoint midpoint;
+	midpoint.y = mid.y;
+	midpoint.x = round(top.x + ((mid.y - top.y)/(bot.y-top.y)) * (bot.x-top.x));
 
-	split.depth = top.depth + ((mid.y - top.y)/(bot.y-top.y)) * (bot.depth-top.depth);
+	midpoint.depth = top.depth + ((mid.y - top.y)/(bot.y-top.y)) * (bot.depth-top.depth);
 
 	float scale = (mid.y - top.y)/(bot.y-top.y);
 
-	split.texturePoint.x = top.texturePoint.x + scale * (bot.texturePoint.x - top.texturePoint.x);
-	split.texturePoint.y = top.texturePoint.y + scale * (bot.texturePoint.y - top.texturePoint.y);
+	midpoint.texturePoint.x = top.texturePoint.x + scale * (bot.texturePoint.x - top.texturePoint.x);
+	midpoint.texturePoint.y = top.texturePoint.y + scale * (bot.texturePoint.y - top.texturePoint.y);
 
-    half_texturedTriangle(top, mid, split, texture, depthBuffer, window);
-    half_texturedTriangle(bot, mid, split, texture, depthBuffer,window);
+    half_texturedTriangle(top, mid, midpoint, texture, depthBuffer, window);
+    half_texturedTriangle(bot, mid, midpoint, texture, depthBuffer,window);
 }
 
 
@@ -482,7 +479,6 @@ RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, 
         
         RayTriangleIntersection reflect_intersect = get_closest_reflection(intersect.intersectionPoint, reflection, triangles, intersect.triangleIndex);
         intersect = reflect_intersect;
-        // if(isinf(intersect.distanceFromCamera)) intersect.isInfinity = true;
     }
     if(intersect.intersectedTriangle.glass){
         vec3 normal = normalize(intersect.intersectedTriangle.normal);
@@ -643,8 +639,6 @@ vector<ModelTriangle> load_obj(string filename, float scale, unordered_map<strin
 	ifstream File(filename);
 	string line;
 
-	// if (filename.compare("logo.obj") == 0 || filename.compare("textured-cornell-box.obj") == 0) colour = "texture";
-	
 	while(getline(File, line)) {
 		if(line == "") continue;
 
