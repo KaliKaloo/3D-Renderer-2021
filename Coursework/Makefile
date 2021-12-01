@@ -1,4 +1,4 @@
-PROJECT_NAME := metal
+PROJECT_NAME := refract
 # PROJECT_NAME := main
 
 

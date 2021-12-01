@@ -17,6 +17,9 @@
 using namespace std;
 using namespace glm;
 
+// Function Headers
+RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index);
+
 #define WIDTH 640
 #define HEIGHT 480
 
@@ -390,6 +393,17 @@ float phong(RayTriangleIntersection intersect, vec3 l, int scale) {
 	return brightness;
 }
 
+vec3 refract(vec3 direction, vec3 normal, float refraction_index) {
+	float a = refraction_index;
+	float b = dot(direction, normal);
+
+	if (b >= 0.0f) {
+		a = 1.0f/a;
+	}
+
+	return normalize(direction * a - normal * (-b + a*b));
+}
+
 RayTriangleIntersection get_closest_reflection(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index){
     RayTriangleIntersection intersect;
     intersect.distanceFromCamera = numeric_limits<float>::infinity();
@@ -416,6 +430,66 @@ RayTriangleIntersection get_closest_reflection(vec3 point, vec3 dir_reflection, 
                 intersect.v = v;
             }
         }
+    }
+    if(intersect.intersectedTriangle.mirror){
+        vec3 normal = normalize(intersect.intersectedTriangle.normal);
+        vec3 reflection = normalize(dir_reflection - (normal * 2.0f * dot(dir_reflection, normal)));
+        
+        RayTriangleIntersection reflect_intersect = get_closest_reflection(intersect.intersectionPoint, reflection, triangles, intersect.triangleIndex);
+        intersect = reflect_intersect;
+        // if(isinf(intersect.distanceFromCamera)) intersect.isInfinity = true;
+    }
+    if(intersect.intersectedTriangle.glass){
+        vec3 normal = normalize(intersect.intersectedTriangle.normal);
+        vec3 refracted = refract(dir_reflection, normal, 1.3);
+
+        RayTriangleIntersection refract_intersect = get_closest_refraction(intersect.intersectionPoint , refracted, triangles, intersect.triangleIndex);
+        intersect = refract_intersect;
+    }
+    return intersect;
+}
+
+RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index){
+    RayTriangleIntersection intersect;
+    intersect.distanceFromCamera = numeric_limits<float>::infinity();
+
+    for(int i = 0; i < triangles.size(); i++) {
+		ModelTriangle tri = triangles[i];
+
+		vec3 e0 = tri.vertices[1] - tri.vertices[0];
+		vec3 e1 = tri.vertices[2] - tri.vertices[0];
+		vec3 sp_vector = point - tri.vertices[0];
+		mat3 de_matrix(-dir_reflection, e0, e1);
+		vec3 possible_s = inverse(de_matrix) * sp_vector;
+		float t = possible_s.x, u = possible_s.y, v = possible_s.z;
+
+		if((u >= 0.0) && (u <= 1.0) && (v >= 0.0) && (v <= 1.0) && (u + v) <= 1.0) {
+            if(intersect.distanceFromCamera > t && t > 0 && i != index) {
+				intersect.distanceFromCamera = t;
+                vec3 point = tri.vertices[0]+u*e0+v*e1;
+                intersect.intersectionPoint = point;
+
+                intersect.intersectedTriangle = tri;
+                intersect.triangleIndex = i;
+                intersect.u = u;
+                intersect.v = v;
+            }
+        }
+    }
+    if(intersect.intersectedTriangle.mirror){
+        vec3 normal = normalize(intersect.intersectedTriangle.normal);
+        vec3 reflection = normalize(dir_reflection - (normal * 2.0f * dot(dir_reflection, normal)));
+        
+        RayTriangleIntersection reflect_intersect = get_closest_reflection(intersect.intersectionPoint, reflection, triangles, intersect.triangleIndex);
+        intersect = reflect_intersect;
+        // if(isinf(intersect.distanceFromCamera)) intersect.isInfinity = true;
+    }
+    if(intersect.intersectedTriangle.glass){
+        vec3 normal = normalize(intersect.intersectedTriangle.normal);
+        vec3 refracted = refract(dir_reflection, normal, 1.3);
+
+        RayTriangleIntersection refract_intersect = get_closest_refraction(intersect.intersectionPoint , refracted, triangles, intersect.triangleIndex);
+        intersect = refract_intersect;
     }
     return intersect;
 }
@@ -448,7 +522,14 @@ RayTriangleIntersection get_closest_intersection(vec3 direction, vector<ModelTri
                     intersect = reflect_intersect;
                     if(isinf(intersect.distanceFromCamera)) intersect.isInfinity = true;
 
-                }else{
+                }else if(tri.glass){
+                    vec3 normal = normalize(tri.normal);
+                    vec3 refracted = refract(direction, normal, 1.3);
+
+                    RayTriangleIntersection refract_intersect = get_closest_refraction(point, refracted, triangles, i);
+                    intersect = refract_intersect;
+                }
+                else{
                     intersect.intersectionPoint = point;
 
                     intersect.distanceFromCamera = t;
@@ -601,10 +682,13 @@ vector<ModelTriangle> load_obj(string filename, float scale, unordered_map<strin
 				triangle.normals[0] = normalVecs[stoi(a[2])-1];
 				triangle.normals[1] = normalVecs[stoi(b[2])-1];
 				triangle.normals[2] = normalVecs[stoi(c[2])-1];
-			} 
+			}
+            if (colour.compare("Glass") == 0)  {
+				triangle.glass = true;
+			} else{triangle.glass = false;}
 			if (colour.compare("Mirror") == 0)  {
 				triangle.mirror = true;
-			}
+			}else{triangle.mirror = false;}
 			
 			if(!textureVertices.empty() && a[1] != "") {
 		
@@ -616,9 +700,6 @@ vector<ModelTriangle> load_obj(string filename, float scale, unordered_map<strin
 
         }else if (tokens[0] == "usemtl") {
 			colour = tokens[1];
-			if (colour[colour.size() - 1] == '\r') {
-				colour.erase(colour.size() - 1);
-			}
 		}
 	}
 
@@ -697,9 +778,9 @@ mat3 rotation_z(float rads) {
 
 void orbit(bool orb) {
 	if(orb) {
-        int rad = 180;
-        if (renderMode == 1) rad = 50;
-        if (renderMode ==3) rad = 400;
+        int rad = 60;
+        if (renderMode == 1) rad = 400;
+        if (renderMode ==3) rad = 50;
 		cam = cam * rotation_y(-pi/rad);
 		look_at();
 	}
@@ -733,16 +814,16 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
             cam = cam * rotation_x(rotVal);
             look_at();
         }
-        else if (event.key.keysym.sym == SDLK_j)  {
+        else if (event.key.keysym.sym == SDLK_l)  {
             cam_orientation = cam_orientation * rotation_y(-rotVal);
         }
-		else if (event.key.keysym.sym == SDLK_l) {
+		else if (event.key.keysym.sym == SDLK_j) {
             cam_orientation = cam_orientation * rotation_y( rotVal);
         }
-		else if (event.key.keysym.sym == SDLK_i) {
+		else if (event.key.keysym.sym == SDLK_k) {
             cam_orientation = cam_orientation * rotation_x(-rotVal);
         }
-		else if (event.key.keysym.sym == SDLK_k)  {
+		else if (event.key.keysym.sym == SDLK_i)  {
             cam_orientation = cam_orientation * rotation_x( rotVal);
         }
 
@@ -788,9 +869,9 @@ int main(int argc, char *argv[]) {
     }
 
 	unordered_map<string, TextureMap> textures;
-	// vector<ModelTriangle> t = load_obj("models/cornell-box-old.obj", 0.5, load_mtl("models/cornell-box.mtl", textures));
+	vector<ModelTriangle> t = load_obj("models/cornell-box-mirror.obj", 0.5, load_mtl("models/cornell-box-mirror.mtl", textures));
 
-    vector<ModelTriangle> t = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
+    // vector<ModelTriangle> t = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
 	// vector<ModelTriangle> t = load_obj("models/textured-cornell-box.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
 	// vector<ModelTriangle> t_logo = load_obj("models/logo.obj", 0.002, load_mtl("models/materials.mtl", textures));
@@ -808,15 +889,11 @@ int main(int argc, char *argv[]) {
     cout << "[Soft Shadows]: " << softShadows << endl;
     
     cout <<""<<endl;
-    cout <<"Key Presses:"<<endl;
+    cout <<"Settings:"<<endl;
     cout <<"1 - Wireframe, 2 - Rasterise, 3 - Raytrace"<<endl;
     cout <<"4 - Diffused, 5 - Gourard, 6 - Phong"<<endl;
     cout <<"v - Proximity, b - Angle Of Inc, n - specular"<<endl;
     cout <<"m - Soft shadow"<<endl;
-    cout <<"Camera: a - Left, d - Right, w - Up, s - Down"<<endl;
-    cout <<"Camera: x - Zoom in, z - Zoom out"<<endl;
-    cout <<"Camera: sdlk_right, sdlk_left, sdlk_up, sdlk_down - rotatation"<<endl;
-    cout <<"Camera: o - Orbit"<<endl;
     cout <<""<<endl;
 
 	DrawingWindow window_grey = DrawingWindow(WIDTH, HEIGHT, false);
