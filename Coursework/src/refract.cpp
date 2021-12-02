@@ -42,7 +42,7 @@ mat3 cam_orientation(
 
 int renderMode = 2; //initially 2 = rasterised mode
 bool orbiting = false;
-bool proximity = true, angleOfInc = true, softShadows = false, specular = true;
+bool proximity = true, angleOfInc = true, softShadows = false, hardShadows = true, specular = true;
 
 void draw(DrawingWindow &window) {
 	window.clearPixels();
@@ -429,7 +429,7 @@ RayTriangleIntersection get_closest_reflection(vec3 point, vec3 dir_reflection, 
         }
     }
 
-    if(recursion<3){
+    if(recursion<5){
         if(intersect.intersectedTriangle.mirror){
             vec3 normal = normalize(intersect.intersectedTriangle.normal);
             vec3 reflection = normalize(dir_reflection - (normal * 2.0f * dot(dir_reflection, normal)));
@@ -439,7 +439,7 @@ RayTriangleIntersection get_closest_reflection(vec3 point, vec3 dir_reflection, 
         }
         if(intersect.intersectedTriangle.glass){
             vec3 normal = normalize(intersect.intersectedTriangle.normal);
-            vec3 refracted = refract(dir_reflection, normal, 1.3);
+            vec3 refracted = refract(dir_reflection, normal, 1.5);
 
             RayTriangleIntersection refract_intersect = get_closest_refraction(intersect.intersectionPoint , refracted, triangles, intersect.triangleIndex, recursion++);
             intersect = refract_intersect;
@@ -476,7 +476,7 @@ RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, 
             }
         }
     }
-    if(recursion<3){
+    if(recursion<5){
         if(intersect.intersectedTriangle.mirror){
             vec3 normal = normalize(intersect.intersectedTriangle.normal);
             vec3 reflection = normalize(dir_reflection - (normal * 2.0f * dot(dir_reflection, normal)));
@@ -486,7 +486,7 @@ RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, 
         }
         if(intersect.intersectedTriangle.glass){
             vec3 normal = normalize(intersect.intersectedTriangle.normal);
-            vec3 refracted = refract(dir_reflection, normal, 1.3);
+            vec3 refracted = refract(dir_reflection, normal, 1.5);
 
             RayTriangleIntersection refract_intersect = get_closest_refraction(intersect.intersectionPoint , refracted, triangles, intersect.triangleIndex, recursion++);
             intersect = refract_intersect;
@@ -525,7 +525,7 @@ RayTriangleIntersection get_closest_intersection(vec3 direction, vector<ModelTri
 
                 }else if(tri.glass){
                     vec3 normal = normalize(tri.normal);
-                    vec3 refracted = refract(direction, normal, 1.3);
+                    vec3 refracted = refract(direction, normal, 1.5);
 
                     RayTriangleIntersection refract_intersect = get_closest_refraction(point, refracted, triangles, i, 1);
                     intersect = refract_intersect;
@@ -569,8 +569,13 @@ void draw_raytrace(vector<ModelTriangle> triangles, float focal, int planeMultip
                         brightness += temp;
                         }
                     brightness = brightness/lightDirections.size();
-
-                }else{
+                }else if(hardShadows){
+                    float temp = pixelBrightness(intersect,lightDirections[0], 256);
+                    bool shadow = is_shadow(intersect, triangles, lightDirections[0]);
+                    if(shadow) temp = 0.18;
+                    brightness += temp;
+                }
+                else{
                     float temp = pixelBrightness(intersect, lightDirections[0], 256);
                     brightness += temp;
                 }
