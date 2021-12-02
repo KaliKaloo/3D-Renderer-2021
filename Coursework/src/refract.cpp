@@ -18,7 +18,7 @@ using namespace std;
 using namespace glm;
 
 // Function Headers
-RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index);
+RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index, int recursion);
 
 #define WIDTH 640
 #define HEIGHT 480
@@ -401,7 +401,7 @@ vec3 refract(vec3 direction, vec3 normal, float refraction_index) {
 	return normalize(direction * a - normal * (-b + a*b));
 }
 
-RayTriangleIntersection get_closest_reflection(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index){
+RayTriangleIntersection get_closest_reflection(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index, int recursion){
     RayTriangleIntersection intersect;
     intersect.distanceFromCamera = numeric_limits<float>::infinity();
 
@@ -428,25 +428,28 @@ RayTriangleIntersection get_closest_reflection(vec3 point, vec3 dir_reflection, 
             }
         }
     }
-    if(intersect.intersectedTriangle.mirror){
-        vec3 normal = normalize(intersect.intersectedTriangle.normal);
-        vec3 reflection = normalize(dir_reflection - (normal * 2.0f * dot(dir_reflection, normal)));
-        
-        RayTriangleIntersection reflect_intersect = get_closest_reflection(intersect.intersectionPoint, reflection, triangles, intersect.triangleIndex);
-        intersect = reflect_intersect;
-        // if(isinf(intersect.distanceFromCamera)) intersect.isInfinity = true;
-    }
-    if(intersect.intersectedTriangle.glass){
-        vec3 normal = normalize(intersect.intersectedTriangle.normal);
-        vec3 refracted = refract(dir_reflection, normal, 1.3);
 
-        RayTriangleIntersection refract_intersect = get_closest_refraction(intersect.intersectionPoint , refracted, triangles, intersect.triangleIndex);
-        intersect = refract_intersect;
+    if(recursion<3){
+        if(intersect.intersectedTriangle.mirror){
+            vec3 normal = normalize(intersect.intersectedTriangle.normal);
+            vec3 reflection = normalize(dir_reflection - (normal * 2.0f * dot(dir_reflection, normal)));
+            
+            RayTriangleIntersection reflect_intersect = get_closest_reflection(intersect.intersectionPoint, reflection, triangles, intersect.triangleIndex, recursion++);
+            intersect = reflect_intersect;
+        }
+        if(intersect.intersectedTriangle.glass){
+            vec3 normal = normalize(intersect.intersectedTriangle.normal);
+            vec3 refracted = refract(dir_reflection, normal, 1.3);
+
+            RayTriangleIntersection refract_intersect = get_closest_refraction(intersect.intersectionPoint , refracted, triangles, intersect.triangleIndex, recursion++);
+            intersect = refract_intersect;
+        }
     }
+    
     return intersect;
 }
 
-RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index){
+RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index, int recursion){
     RayTriangleIntersection intersect;
     intersect.distanceFromCamera = numeric_limits<float>::infinity();
 
@@ -473,19 +476,21 @@ RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, 
             }
         }
     }
-    if(intersect.intersectedTriangle.mirror){
-        vec3 normal = normalize(intersect.intersectedTriangle.normal);
-        vec3 reflection = normalize(dir_reflection - (normal * 2.0f * dot(dir_reflection, normal)));
-        
-        RayTriangleIntersection reflect_intersect = get_closest_reflection(intersect.intersectionPoint, reflection, triangles, intersect.triangleIndex);
-        intersect = reflect_intersect;
-    }
-    if(intersect.intersectedTriangle.glass){
-        vec3 normal = normalize(intersect.intersectedTriangle.normal);
-        vec3 refracted = refract(dir_reflection, normal, 1.3);
+    if(recursion<3){
+        if(intersect.intersectedTriangle.mirror){
+            vec3 normal = normalize(intersect.intersectedTriangle.normal);
+            vec3 reflection = normalize(dir_reflection - (normal * 2.0f * dot(dir_reflection, normal)));
+            
+            RayTriangleIntersection reflect_intersect = get_closest_reflection(intersect.intersectionPoint, reflection, triangles, intersect.triangleIndex, recursion++);
+            intersect = reflect_intersect;
+        }
+        if(intersect.intersectedTriangle.glass){
+            vec3 normal = normalize(intersect.intersectedTriangle.normal);
+            vec3 refracted = refract(dir_reflection, normal, 1.3);
 
-        RayTriangleIntersection refract_intersect = get_closest_refraction(intersect.intersectionPoint , refracted, triangles, intersect.triangleIndex);
-        intersect = refract_intersect;
+            RayTriangleIntersection refract_intersect = get_closest_refraction(intersect.intersectionPoint , refracted, triangles, intersect.triangleIndex, recursion++);
+            intersect = refract_intersect;
+        }
     }
     return intersect;
 }
@@ -514,7 +519,7 @@ RayTriangleIntersection get_closest_intersection(vec3 direction, vector<ModelTri
                     vec3 normal = normalize(tri.normal);
                     vec3 reflection = normalize(direction - (normal * 2.0f * dot(direction, normal)));
                     
-                    RayTriangleIntersection reflect_intersect = get_closest_reflection(point, reflection, triangles, i);
+                    RayTriangleIntersection reflect_intersect = get_closest_reflection(point, reflection, triangles, i, 1);
                     intersect = reflect_intersect;
                     if(isinf(intersect.distanceFromCamera)) intersect.isInfinity = true;
 
@@ -522,7 +527,7 @@ RayTriangleIntersection get_closest_intersection(vec3 direction, vector<ModelTri
                     vec3 normal = normalize(tri.normal);
                     vec3 refracted = refract(direction, normal, 1.3);
 
-                    RayTriangleIntersection refract_intersect = get_closest_refraction(point, refracted, triangles, i);
+                    RayTriangleIntersection refract_intersect = get_closest_refraction(point, refracted, triangles, i, 1);
                     intersect = refract_intersect;
                 }
                 else{
