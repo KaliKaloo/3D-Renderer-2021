@@ -850,8 +850,10 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 
 		else if (event.key.keysym.sym == SDLK_v)  { proximity = (proximity) ? false : true; cout << "[Proximity]: " << proximity << endl; }
 		else if (event.key.keysym.sym == SDLK_b) { angleOfInc  = (angleOfInc)  ? false : true; cout << "[Angle of Inc]: " << angleOfInc << endl; }
-		else if (event.key.keysym.sym == SDLK_n)        { specular  = (specular)  ? false : true; cout << "[Specular]: " << specular << endl; }
-        else if (event.key.keysym.sym == SDLK_m)         { softShadows   = (softShadows)   ? false : true; cout << "[Shadows]: " << softShadows << endl; }
+		else if (event.key.keysym.sym == SDLK_n) { specular  = (specular)  ? false : true; cout << "[Specular]: " << specular << endl; }
+        else if (event.key.keysym.sym == SDLK_m) { softShadows   = (softShadows)   ? false : true; hardShadows = false; cout << "[Soft Shadows]: " << softShadows << endl; }
+        else if (event.key.keysym.sym == SDLK_COMMA) { hardShadows   = (hardShadows)  ? false : true; softShadows = false; cout << "[Hard Shadows]: " << softShadows << endl; }
+
 	}
 }
 
