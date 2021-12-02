@@ -819,16 +819,16 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
             look_at();
         }
         else if (event.key.keysym.sym == SDLK_l)  {
-            cam_orientation = cam_orientation * rotation_y(-rotVal);
+            cam_orientation =  rotation_y(-rotVal)*cam_orientation;
         }
 		else if (event.key.keysym.sym == SDLK_j) {
-            cam_orientation = cam_orientation * rotation_y( rotVal);
+            cam_orientation = rotation_y( rotVal)*cam_orientation ;
         }
 		else if (event.key.keysym.sym == SDLK_k) {
-            cam_orientation = cam_orientation * rotation_x(-rotVal);
+            cam_orientation = rotation_x(-rotVal)*cam_orientation ;
         }
 		else if (event.key.keysym.sym == SDLK_i)  {
-            cam_orientation = cam_orientation * rotation_x( rotVal);
+            cam_orientation = rotation_x( rotVal)* cam_orientation ;
         }
 
 		else if (event.key.keysym.sym == SDLK_o) orbiting = (orbiting) ? false : true;
