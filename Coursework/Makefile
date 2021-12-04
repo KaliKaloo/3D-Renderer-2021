@@ -1,4 +1,4 @@
-PROJECT_NAME := refract
+PROJECT_NAME := improved
 # PROJECT_NAME := main
 
 
