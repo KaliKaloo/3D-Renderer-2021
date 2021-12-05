@@ -26,11 +26,11 @@ RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, 
 #define pi 3.14159265359
 #define Refractive_Index 1.5
 
-// vec3   camera(0.0, 0.0, 4.0); // cornell camera
-// vec3 light(0.0, 1.0, 1.0); // cornell light 
+vec3   camera(0.0, 0.0, 4.0); // cornell camera
+vec3 light(0.0, 1.0, 1.0); // cornell light 
 
-vec3   camera(0.0, 0.0, 2.5); // sphere camera
-vec3 light(1.0, 2.0, 2.8); // sphere light
+// vec3   camera(0.0, 0.0, 2.5); // sphere camera
+// vec3 light(1.0, 2.0, 2.8); // sphere light
 
 // vec3   camera(0.5, 0.5, 2.0); //logo camera
 // vec3 light(1.0, 1.0, 2.0);  //logo light
@@ -331,7 +331,15 @@ float flatShading(RayTriangleIntersection intersect, vec3 l, int scale) {
         scale_p *= 0;
     }
 	if(scale_s > 0 && specular) scale_p += scale_s;
-	return (scale_p < 1) ? scale_p : 1;
+    
+    if (scale_p > 1) {
+		scale_p = 1;
+	} 
+	if (scale_p < 0.2) {
+		scale_p = 0.2;
+	}
+
+	return scale_p ;
 }
 
 float gouraurd(RayTriangleIntersection intersect, vec3 l,int scale) {
@@ -881,12 +889,12 @@ int main(int argc, char *argv[]) {
 
 	unordered_map<string, TextureMap> textures;
     // vector<ModelTriangle> t = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
-	// vector<ModelTriangle> t = load_obj("models/cornell-box-mirror.obj", 0.5, load_mtl("models/cornell-box-mirror.mtl", textures));
+	vector<ModelTriangle> t = load_obj("models/cornell-box-mirror.obj", 0.5, load_mtl("models/cornell-box-mirror.mtl", textures));
 	// vector<ModelTriangle> t = load_obj("models/textured-cornell-box.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
 
 	// vector<ModelTriangle> t = load_obj("models/logo.obj", 0.002, load_mtl("models/materials.mtl", textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
-	vector<ModelTriangle> t_sphere = load_obj("models/sphere.obj", 0.4, load_mtl("models/cornell-box.mtl",textures));
+	// vector<ModelTriangle> t_sphere = load_obj("models/sphere.obj", 0.4, load_mtl("models/cornell-box.mtl",textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/high-res-sphere.obj", 0.4, load_mtl("models/cornell-box.mtl",textures));
 
 	// t.insert(t.end(),t_logo.begin(), t_logo.end());
@@ -917,8 +925,8 @@ int main(int argc, char *argv[]) {
 		orbit(orbiting);
 		draw(window_grey);
 
-        // rendering(t, focal, planemultiplyer, textures, lightDirections, window_grey);
-		rendering(t_sphere, focal, planemultiplyer, textures, lightDirections, window_grey); //sphere only
+        rendering(t, focal, planemultiplyer, textures, lightDirections, window_grey);
+		// rendering(t_sphere, focal, planemultiplyer, textures, lightDirections, window_grey); //sphere only
 
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window_grey.renderFrame();
