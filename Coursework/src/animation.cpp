@@ -93,6 +93,23 @@ void drawLine(CanvasPoint from, CanvasPoint to, Colour colour, DrawingWindow &wi
     }
 }
 
+void texturedLine(DrawingWindow &window, vector<vector<float>> &depthBuffer, CanvasPoint from, CanvasPoint to, float numberOfSteps, std::vector<Colour> colours) {
+	auto points = interpolatePoints(from, to, numberOfSteps + 1);
+    
+	for (int c = 0; c < points.size(); c++) {
+			int newX = round(points[c].x);
+			int newY = round(points[c].y);
+			if (newX >= 0 && newX < window.width && newY >= 0 && newY < window.height){
+				if (points[c].depth > depthBuffer[newX][newY]) {
+
+					depthBuffer[newX][newY] = points[c].depth;
+					uint32_t set = (255 << 24) + (colours[c].red << 16) + (colours[c].green << 8) + colours[c].blue;
+					window.setPixelColour(newX, newY, set);
+				}
+			}
+		}
+}
+
 void strokedTriangle(CanvasTriangle t, Colour colour, DrawingWindow &window){
     CanvasPoint p_1 = t[0];
     CanvasPoint p_2 = t[1];
@@ -220,7 +237,6 @@ void texturedTriangle( CanvasTriangle triangle, const TextureMap texture, vector
     half_texturedTriangle(top, mid, midpoint, texture, depthBuffer, window);
     half_texturedTriangle(bot, mid, midpoint, texture, depthBuffer,window);
 }
-
 
 CanvasPoint getCanvasIntersectionPoint(glm::vec3 vertexPosition, float focal, int planeMultiplyer, DrawingWindow &window){
 	vec3 vertex = (vertexPosition - camera)*cameraOrientation;
@@ -891,8 +907,8 @@ int main(int argc, char *argv[]) {
 
 	unordered_map<string, TextureMap> textures;
     // vector<ModelTriangle> t = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
-	vector<ModelTriangle> t = load_obj("models/cornell-box-mirror.obj", 0.5, load_mtl("models/cornell-box-mirror.mtl", textures));
-	// vector<ModelTriangle> t = load_obj("models/textured-cornell-box.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
+	// vector<ModelTriangle> t = load_obj("models/cornell-box-mirror.obj", 0.5, load_mtl("models/cornell-box-mirror.mtl", textures));
+	vector<ModelTriangle> t = load_obj("models/textured-cornell-box.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
 
 	// vector<ModelTriangle> t = load_obj("models/logo.obj", 0.002, load_mtl("models/materials.mtl", textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
