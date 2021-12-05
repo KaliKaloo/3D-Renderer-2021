@@ -17,7 +17,7 @@
 using namespace std;
 using namespace glm;
 
-// Function Headers
+// Some Function Headers
 RayTriangleIntersection get_closest_refraction(vec3 point, vec3 dir_reflection, vector<ModelTriangle> triangles, int index, int recursion);
 
 #define WIDTH 640
@@ -44,6 +44,7 @@ mat3 cameraOrientation(
 int renderMode = 2; //initially 2 = rasterised mode
 bool orbiting = false;
 bool proximity = true, angleOfInc = true, softShadows = false, hardShadows = true, specular = true;
+
 
 void draw(DrawingWindow &window) {
 	window.clearPixels();
@@ -616,12 +617,14 @@ void draw_raytrace(vector<ModelTriangle> triangles, float focal, int planeMultip
                 colour.green *= brightness;
                 colour.blue *=  brightness;
                 
-                if(intersect.isInfinity){
+                
+			}
+            if(intersect.isInfinity){
                     colour.red = 0;
                     colour.green = 0;
                     colour.blue =0;
-                }
-			}
+            }
+            
             uint32_t col = (255 << 24) + (int(colour.red) <<16) + (int(colour.green) << 8) + int(colour.blue);
             window.setPixelColour(x,y,col);
 		}
@@ -806,7 +809,7 @@ void orbit(bool orb) {
 function<void(vector<ModelTriangle>, float, int, unordered_map<string, TextureMap>,vector<glm::vec3> lightDirections, DrawingWindow &)> rendering = draw_raytrace;
 
 void handleEvent(SDL_Event event, DrawingWindow &window) {
-    float rotVal = (pi)/180;
+    float rotVal = (pi)/90;
 
 	if (event.type == SDL_KEYDOWN) {
 		if (event.key.keysym.sym == SDLK_s) camera.y -= 0.1;
@@ -851,7 +854,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_2) { rendering = draw_rasterise; cout << "[Rendering Mode]: rasterise" << endl; }
 		else if (event.key.keysym.sym == SDLK_3) { rendering = 
         draw_raytrace; cout << "[Rendering Mode]: raytrace" << endl; }
-		else if (event.key.keysym.sym == SDLK_4) { lighting = flatShading; cout << "[Lighting]: flatShading" << endl; }
+		else if (event.key.keysym.sym == SDLK_4) { lighting = flatShading; cout << "[Lighting]: flat shading" << endl; }
 		else if (event.key.keysym.sym == SDLK_5) { lighting = gouraurd; cout << "[Lighting]: gouraurd" << endl; }
 		else if (event.key.keysym.sym == SDLK_6) { lighting = phong; cout << "[Lighting]: phong" << endl; }
 		else if (event.key.keysym.sym == SDLK_KP_8) light.z -= 0.1;
@@ -866,7 +869,6 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_n) { specular  = (specular)  ? false : true; cout << "[Specular]: " << specular << endl; }
         else if (event.key.keysym.sym == SDLK_m) { softShadows   = (softShadows)   ? false : true; hardShadows = false; cout << "[Soft Shadows]: " << softShadows << endl; }
         else if (event.key.keysym.sym == SDLK_COMMA) { hardShadows   = (hardShadows)  ? false : true; softShadows = false; cout << "[Hard Shadows]: " << softShadows << endl; }
-
 	}
 }
 

@@ -1,4 +1,4 @@
-PROJECT_NAME := improved
+PROJECT_NAME := animation
 # PROJECT_NAME := main
 
 
