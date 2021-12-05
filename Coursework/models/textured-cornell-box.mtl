@@ -22,7 +22,10 @@ Kd 1.000000 0.000000 1.000000
 newmtl Cyan
 Kd 0.000000 1.000000 1.000000
 
-newmtl Cobbles
+newmtl Lightpurple
+Kd 0.87843137254 0.73333333333 0.89411764705
+
+newmtl Bricks
 Kd 1.000000 1.000000 1.000000
 
-map_Kd cobbelTexture.ppm
+map_Kd bricks.ppm

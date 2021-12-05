@@ -756,7 +756,6 @@ unordered_map<string, Colour> load_mtl(string filename, unordered_map<string, Te
 
 	while(getline(File, line)) {
 		if(line == "") continue;
-
 		vector<string> parts = split(line, ' ');
 		if(parts[0] == "newmtl") {
 			colourName = parts[1];
