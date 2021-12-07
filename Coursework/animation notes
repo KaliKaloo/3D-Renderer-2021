@@ -1,0 +1,16 @@
++x = go right
+-x = go left
+
++y = going up
+-y = going down
+
++z = zooming out
+-z = zooming in 
+
+default: 0.0, 0.0, 4.0
+
+-2.0, -2.5, 5.0 
+orientation = look right and up
+
+2.0, 2.5, 5.0
+orientation = look left and down
