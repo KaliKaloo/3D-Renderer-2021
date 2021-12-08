@@ -313,7 +313,7 @@ bool is_shadow(RayTriangleIntersection intersect, vector<ModelTriangle> triangle
 		float t = possible_s.x, u = possible_s.y, v = possible_s.z;
 
 		if((u >= 0.0) && (u <= 1.0) && (v >= 0.0) && (v <= 1.0) && (u + v) <= 1.0) {
-			if(t < glm::length(shadow_ray) && t > 0.05 && i != intersect.triangleIndex) {
+			if(t < length(shadow_ray) && t > 0.05 && i != intersect.triangleIndex) {
 				return true;
 			}
 		}
@@ -648,20 +648,22 @@ void draw_raytrace(vector<ModelTriangle> triangles, float focal, int planeMultip
 }
 
 void vertexNormals(vector<ModelTriangle> &triangles) {
-    
     for(int i = 0; i < triangles.size(); i++) {
-        ModelTriangle tri = triangles[i];
-        vector<glm::vec3> normals;
-        for(int v = 0; v < tri.vertices.size(); v++) {
-            glm::vec3 vertex = tri.normal;
+        ModelTriangle t= triangles[i];
+        vector<vec3> normals;
+
+        for(int v = 0; v < t.vertices.size(); v++) {
+            vec3 vertex = t.normal;
             int count = 1;
+
             for(int j = 0; j < triangles.size(); j++) {
-                ModelTriangle tri2 = triangles[j];
-                for(int u = 0; u < tri.vertices.size(); u++) {
-                    if(i != j && tri2.vertices[v].x == tri2.vertices[u].x && tri.vertices[v].y == tri2.vertices[u].y && tri.vertices[v].z == tri2.vertices[u].z) {
-                        if (acos(dot(tri.normal, tri2.normal)/(length(tri.normal)*length(tri2.normal))) < pi/4) {
-							vertex = vertex + tri2.normal;
-							count = count + 1;
+                ModelTriangle t2 = triangles[j];
+
+                for(int u = 0; u < t.vertices.size(); u++) {
+                    if(i != j && t2.vertices[v].x == t2.vertices[u].x && t.vertices[v].y == t2.vertices[u].y && t.vertices[v].z == t2.vertices[u].z) {
+                        if (acos(dot(t.normal, t2.normal)/(length(t.normal)*length(t2.normal))) < pi/4) {
+							vertex = vertex + t2.normal;
+							count++;
 						}
                     }
                 }
@@ -750,23 +752,29 @@ vector<ModelTriangle> load_obj(string filename, float scale, unordered_map<strin
 
 unordered_map<string, Colour> load_mtl(string filename, unordered_map<string, TextureMap> &textures) {
 	unordered_map<string, Colour> colours;
+	string name;
+
 	ifstream File(filename);
-	string colourName;
 	string line;
 
 	while(getline(File, line)) {
 		if(line == "") continue;
 		vector<string> parts = split(line, ' ');
 		if(parts[0] == "newmtl") {
-			colourName = parts[1];
+			name = parts[1];
 		} else if(parts[0] == "Kd") {
-			Colour colour(int(stof(parts[1])*255),int(stof(parts[2])*255),int(stof(parts[3])*255));
-			colours.insert({colourName, colour});
+            string r = parts[1];
+            string g = parts[2];
+            string b = parts[3];
+
+			Colour colour(int(stof(r)*255),int(stof(g)*255),int(stof(b)*255));
+			colours.insert({name, colour});
 		} else if(parts[0] == "map_Kd") {
-			Colour colour = colours[colourName];
+			Colour colour = colours[name];
 			colour.name = parts[1];
-			textures.insert({parts[1], TextureMap(parts[1])});
-			colours[colourName] = colour;
+            TextureMap text(parts[1]);
+			textures.insert({parts[1], text});
+			colours[name] = colour;
 		}
 	}
 	File.close();
@@ -1157,9 +1165,9 @@ int main(int argc, char *argv[]) {
     }
 
 	unordered_map<string, TextureMap> textures;
-	vector<ModelTriangle> t = load_obj("models/cornell-box.obj", 0.5, load_mtl("models/cornell-box.mtl", textures));
+	// vector<ModelTriangle> t = load_obj("models/cornell-box.obj", 0.5, load_mtl("models/cornell-box.mtl", textures));
     // vector<ModelTriangle> t = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
-	// vector<ModelTriangle> t = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
+	vector<ModelTriangle> t = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
 
 	// vector<ModelTriangle> t = load_obj("models/logo.obj", 0.002, load_mtl("models/materials.mtl", textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
@@ -1189,7 +1197,7 @@ int main(int argc, char *argv[]) {
 	DrawingWindow window_grey = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
-	animatation(focal, planemultiplyer, lightDirections, window_grey);
+	// animatation(focal, planemultiplyer, lightDirections, window_grey);
 
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
