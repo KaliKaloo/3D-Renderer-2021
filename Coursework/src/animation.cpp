@@ -968,125 +968,175 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
     vector<ModelTriangle> bunnybox = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
     vector<ModelTriangle> sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
 	bunnybox.insert(bunnybox.end(),sphere.begin(), sphere.end());
-    
-    // ----  UNCOMMENT for ray trace TMRbox animation --- //
-    vector<ModelTriangle> TMRbox = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl",textures));
-	rendering = draw_raytrace;
-	
-	for(int i = 0; i < 40; i++) {
-		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+
+    for(int i = 0; i < 20; i++) {
+		rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
 		string name =  to_string(frameNumber);
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
-		float temp_z = 40-i;
+		float temp_z = 20-i;
         float temp_x = i+1;
-		camera.z -= 0.3*(1/(temp_z));
+		camera.z -= 0.3*(1/(temp_x));
+
+		look_at();
+		frameNumber++;
+	}
+    for(int i = 0; i < 20; i++) {
+		rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+		string name =  to_string(frameNumber);
+        lighting = gouraurd;
+		window.savePPM("frames/"+name+".ppm");
+		cout << "saved " << frameNumber << endl;
+		float temp_z = 20-i;
+        float temp_x = i+1;
 		camera.x -= 0.2*(1/(temp_x));
-        camera.y += 0.007;
-		look_at();
+		camera.y -= 0.2*(1/(temp_x));
 		frameNumber++;
 	}
-    for(int i = 0; i < 40; i++) {
-		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+     for(int i = 0; i < 20; i++) {
+		rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
 		string name =  to_string(frameNumber);
+        lighting = phong;
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
-		float temp_z = 40-i;
+		float temp_z = 20-i;
         float temp_x = i+1;
-
-		camera.z -= 0.4*(1/(temp_x));
-		camera.x -= 0.003;
-        camera.y += 0.007;
-
-		look_at();
-		frameNumber++;
-	}
-
-    for(int i = 0; i < 40; i++) {
-		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
-		window.savePPM("frames/"+name+".ppm");
-		cout << "saved " << frameNumber << endl;
-		float temp_z = 40-i;
-        float temp_x = i+1;
-
-		camera.z -= 0.4*(1/(temp_z));
-        camera.y += 0.007;
-
-		look_at();
-		frameNumber++;
-	}
-
-     for(int i = 0; i < 40; i++) {
-		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
-		window.savePPM("frames/"+name+".ppm");
-		cout << "saved " << frameNumber << endl;
-		float temp_z = 40-i;
-        float temp_x = i+1;
-        
 		camera.x += 0.2*(1/(temp_z));
-
-		look_at();
+		camera.y += 0.2*(1/(temp_z));
 		frameNumber++;
 	}
-
-    for(int i = 0; i < 40; i++) {
-		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+    for(int i = 0; i < 20; i++) {
+		rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
 		string name =  to_string(frameNumber);
+        lighting = phong;
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
-		float temp_z = 40-i;
+		float temp_z = 20-i;
         float temp_x = i+1;
-
-		camera.x += 0.1*(1/(temp_x));
-
-		look_at();
+		camera.x += 0.4*(1/(temp_z));
+		camera.y += 0.4*(1/(temp_z));
+        look_at();
 		frameNumber++;
 	}
-    for(int i = 0; i < 40; i++) {
-		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
-		window.savePPM("frames/"+name+".ppm");
-		cout << "saved " << frameNumber << endl;
-		float temp_z = 40-i;
-        float temp_x = i+1;
+    
+    // // ----  UNCOMMENT for ray trace TMRbox + soft shadows animation --- //
+    // vector<ModelTriangle> TMRbox = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl",textures));
+	// rendering = draw_raytrace;
+	// softShadows = true;
+	// for(int i = 0; i < 40; i++) {
+	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 40-i;
+    //     float temp_x = i+1;
+	// 	camera.z -= 0.3*(1/(temp_z));
+	// 	camera.x -= 0.2*(1/(temp_x));
+    //     camera.y += 0.007;
+	// 	look_at();
+	// 	frameNumber++;
+	// }
+    // for(int i = 0; i < 40; i++) {
+	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 40-i;
+    //     float temp_x = i+1;
 
-        camera.y -= 0.01*(1/(temp_z));
-		camera.x += 0.1*(1/(temp_z));
+	// 	camera.z -= 0.4*(1/(temp_x));
+	// 	camera.x -= 0.003;
+    //     camera.y += 0.007;
 
-		look_at();
-		frameNumber++;
-	}
+	// 	look_at();
+	// 	frameNumber++;
+	// }
 
-    for(int i = 0; i < 40; i++) {
-		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
-		window.savePPM("frames/"+name+".ppm");
-		cout << "saved " << frameNumber << endl;
-		float temp_z = 40-i;
-        float temp_x = i+1;
+    // for(int i = 0; i < 40; i++) {
+	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 40-i;
+    //     float temp_x = i+1;
 
-        camera.y -= 0.01;
-		camera.z += 0.08;
+	// 	camera.z -= 0.4*(1/(temp_z));
+    //     camera.y += 0.007;
 
-		look_at();
-		frameNumber++;
-	}
-    for(int i = 0; i < 40; i++) {
-		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
-		window.savePPM("frames/"+name+".ppm");
-		cout << "saved " << frameNumber << endl;
-		float temp_z = 40-i;
-        float temp_x = i+1;
+	// 	look_at();
+	// 	frameNumber++;
+	// }
 
-		camera.z += 0.4*(1/temp_x);
-        camera.x -= 0.2*(1/(temp_x));
+    //  for(int i = 0; i < 40; i++) {
+	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 40-i;
+    //     float temp_x = i+1;
+        
+	// 	camera.x += 0.2*(1/(temp_z));
 
-		look_at();
-		frameNumber++;
-	}
+	// 	look_at();
+	// 	frameNumber++;
+	// }
+
+    // for(int i = 0; i < 40; i++) {
+	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 40-i;
+    //     float temp_x = i+1;
+
+	// 	camera.x += 0.1*(1/(temp_x));
+
+	// 	look_at();
+	// 	frameNumber++;
+	// }
+    // for(int i = 0; i < 40; i++) {
+	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 40-i;
+    //     float temp_x = i+1;
+
+    //     camera.y -= 0.01*(1/(temp_z));
+	// 	camera.x += 0.1*(1/(temp_z));
+
+	// 	look_at();
+	// 	frameNumber++;
+	// }
+
+    // for(int i = 0; i < 40; i++) {
+	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 40-i;
+    //     float temp_x = i+1;
+
+    //     camera.y -= 0.01;
+	// 	camera.z += 0.08;
+
+	// 	look_at();
+	// 	frameNumber++;
+	// }
+    // for(int i = 0; i < 40; i++) {
+	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 40-i;
+    //     float temp_x = i+1;
+
+	// 	camera.z += 0.4*(1/temp_x);
+    //     camera.x -= 0.2*(1/(temp_x));
+
+	// 	look_at();
+	// 	frameNumber++;
+	// }
 }
 
 int main(int argc, char *argv[]) {
