@@ -892,7 +892,7 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 
 void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections, DrawingWindow &window) {
 	unordered_map<string, TextureMap> textures;
-	int frameNumber = 0;
+	int frameNumber = 256;
 	
 	// ---  UNCOMMENT for wireframe animation --- //
     // vector<ModelTriangle> bunnybox = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
@@ -900,7 +900,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
     // for(int i = 0; i < 40; i++) { 
 	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
 
-    //     string name = to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
 	// 	window.savePPM("frames/"+name+".ppm");
 
 	// 	camera = camera * rotation_y(-pi/20);
@@ -917,7 +918,7 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
     // for(int i = 0; i < 40; i++) { //zoom out bottom left
 	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
 
-	// 	string name = to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
 
 	// 	window.savePPM("frames/"+name+".ppm");
 		
@@ -933,7 +934,7 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     // for(int i = 0; i < 40; i++) { //zoom back in
 	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name = to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
 
 	// 	window.savePPM("frames/"+name+".ppm");
 		
@@ -949,7 +950,7 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     // for(int i = 0; i < 40; i++) { //zoom out top right
 	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name = to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
 
 	// 	window.savePPM("frames/"+name+".ppm");
 		
@@ -965,7 +966,7 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     // for(int i = 0; i < 40; i++) { //zoom back in
 	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name = to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
 
 	// 	window.savePPM("frames/"+name+".ppm");
 		
@@ -979,14 +980,15 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	// 	frameNumber++;
 	// }
 
-    // ---- UNCOMMENT for ray trace bunny/sphear box animation --- //
+    // // ---- UNCOMMENT for ray trace bunny/sphear box animation --- //
     // vector<ModelTriangle> bunnybox = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
     // vector<ModelTriangle> sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
 	// bunnybox.insert(bunnybox.end(),sphere.begin(), sphere.end());
 
     // for(int i = 0; i < 10; i++) {
 	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
 	// 	window.savePPM("frames/"+name+".ppm");
 	// 	cout << "saved " << frameNumber << endl;
 	// 	float temp_z = 10-i;
@@ -998,7 +1000,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	// }
     // for(int i = 0; i < 20; i++) {
 	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
     //     lighting = gouraurd;
 	// 	window.savePPM("frames/"+name+".ppm");
 	// 	cout << "saved " << frameNumber << endl;
@@ -1010,7 +1013,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	// }
     //  for(int i = 0; i < 10; i++) {
 	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+		
     //     lighting = gouraurd;
 	// 	window.savePPM("frames/"+name+".ppm");
 	// 	cout << "saved " << frameNumber << endl;
@@ -1022,7 +1026,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	// }
     // for(int i = 0; i < 20; i++) {
 	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
     //     lighting = phong;
 	// 	window.savePPM("frames/"+name+".ppm");
 	// 	cout << "saved " << frameNumber << endl;
@@ -1035,12 +1040,12 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	// }
 
 
-	// ---- UNCOMMENT for soft shadow mirror and glass  animation --- //
+	// // ---- UNCOMMENT for soft shadow mirror and glass  animation --- //
     // vector<ModelTriangle> box = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl",textures));
 	// softShadows = true;
     // for(int i = 0; i < 10; i++) {
 	// 	rendering(box,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
+	// 	string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
 	// 	window.savePPM("frames/"+name+".ppm");
 	// 	cout << "saved " << frameNumber << endl;
 	// 	float temp_z = 10-i;
@@ -1055,7 +1060,7 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	rendering = draw_raytrace;
 	for(int i = 0; i < 40; i++) {
 		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
+		string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
 		float temp_z = 40-i;
@@ -1068,7 +1073,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	}
     for(int i = 0; i < 40; i++) {
 		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
+		string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
 		float temp_z = 40-i;
@@ -1084,7 +1090,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     for(int i = 0; i < 40; i++) {
 		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
+		string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
 		float temp_z = 40-i;
@@ -1099,7 +1106,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
      for(int i = 0; i < 40; i++) {
 		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
+		string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
 		float temp_z = 40-i;
@@ -1113,7 +1121,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     for(int i = 0; i < 40; i++) {
 		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
+		string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
 		float temp_z = 40-i;
@@ -1126,7 +1135,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	}
     for(int i = 0; i < 40; i++) {
 		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
+		string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
 		float temp_z = 40-i;
@@ -1141,7 +1151,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     for(int i = 0; i < 40; i++) {
 		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
+		string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
 		float temp_z = 40-i;
@@ -1156,7 +1167,8 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     for(int i = 0; i < 40; i++) {
 		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
+		string name =  string(6-to_string(frameNumber).length(), '0')+to_string(frameNumber);
+		
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
 		float temp_z = 40-i;
