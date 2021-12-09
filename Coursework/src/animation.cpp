@@ -880,12 +880,6 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_4) { lighting = flatShading; cout << "[Lighting]: flat shading" << endl; }
 		else if (event.key.keysym.sym == SDLK_5) { lighting = gouraurd; cout << "[Lighting]: gouraurd" << endl; }
 		else if (event.key.keysym.sym == SDLK_6) { lighting = phong; cout << "[Lighting]: phong" << endl; }
-		else if (event.key.keysym.sym == SDLK_KP_8) light.z -= 0.1;
-		else if (event.key.keysym.sym == SDLK_KP_2) light.z += 0.1;
-		else if (event.key.keysym.sym == SDLK_KP_6) light.x += 0.1;
-		else if (event.key.keysym.sym == SDLK_KP_4) light.x -= 0.1;
-		else if (event.key.keysym.sym == SDLK_KP_MINUS) light.y -= 0.1;
-		else if (event.key.keysym.sym == SDLK_KP_PLUS) light.y += 0.1;
 
 		else if (event.key.keysym.sym == SDLK_v)  { proximity = (proximity) ? false : true; cout << "[Proximity]: " << proximity << endl; }
 		else if (event.key.keysym.sym == SDLK_b) { angleOfInc  = (angleOfInc)  ? false : true; cout << "[Angle of Inc]: " << angleOfInc << endl; }
@@ -899,6 +893,22 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections, DrawingWindow &window) {
 	unordered_map<string, TextureMap> textures;
 	int frameNumber = 0;
+	
+	// ---  UNCOMMENT for wireframe animation --- //
+    // vector<ModelTriangle> bunnybox = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
+	// rendering = draw_wireframe;
+    // for(int i = 0; i < 40; i++) { 
+	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+
+    //     string name = to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+
+	// 	camera = camera * rotation_y(-pi/20);
+	// 	look_at();
+
+    //     cout << "1 saved " << frameNumber << endl;
+    //     frameNumber++;
+    // }
 
     // ---  UNCOMMENT for texture rasterise animation --- //
 	// vector<ModelTriangle> TMRbox = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
@@ -923,7 +933,6 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     // for(int i = 0; i < 40; i++) { //zoom back in
 	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-    //     int numberZero = 6 - to_string(frameNumber).length();
 	// 	string name = to_string(frameNumber);
 
 	// 	window.savePPM("frames/"+name+".ppm");
@@ -940,7 +949,6 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     // for(int i = 0; i < 40; i++) { //zoom out top right
 	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-    //     int numberZero = 6 - to_string(frameNumber).length();
 	// 	string name = to_string(frameNumber);
 
 	// 	window.savePPM("frames/"+name+".ppm");
@@ -957,7 +965,6 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 
     // for(int i = 0; i < 40; i++) { //zoom back in
 	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-    //     int numberZero = 6 - to_string(frameNumber).length();
 	// 	string name = to_string(frameNumber);
 
 	// 	window.savePPM("frames/"+name+".ppm");
@@ -973,178 +980,194 @@ void animatation(float focal, int planeMultiplyer, vector<vec3> lightDirections,
 	// }
 
     // ---- UNCOMMENT for ray trace bunny/sphear box animation --- //
-    vector<ModelTriangle> bunnybox = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
-    vector<ModelTriangle> sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
-	bunnybox.insert(bunnybox.end(),sphere.begin(), sphere.end());
+    // vector<ModelTriangle> bunnybox = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
+    // vector<ModelTriangle> sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
+	// bunnybox.insert(bunnybox.end(),sphere.begin(), sphere.end());
 
-    for(int i = 0; i < 20; i++) {
-		rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+    // for(int i = 0; i < 10; i++) {
+	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 10-i;
+    //     float temp_x = i+1;
+	// 	camera.z -= 0.3*(1/(temp_x));
+
+	// 	look_at();
+	// 	frameNumber++;
+	// }
+    // for(int i = 0; i < 20; i++) {
+	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+    //     lighting = gouraurd;
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 20-i;
+    //     float temp_x = i+1;
+	// 	camera.x -= 0.2*(1/(temp_x));
+	// 	camera.y -= 0.2*(1/(temp_x));
+	// 	frameNumber++;
+	// }
+    //  for(int i = 0; i < 10; i++) {
+	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+    //     lighting = gouraurd;
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 10-i;
+    //     float temp_x = i+1;
+	// 	camera.x += 0.2*(1/(temp_z));
+	// 	camera.y += 0.2*(1/(temp_z));
+	// 	frameNumber++;
+	// }
+    // for(int i = 0; i < 20; i++) {
+	// 	rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+    //     lighting = phong;
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 20-i;
+    //     float temp_x = i+1;
+	// 	camera.x += 0.4*(1/(temp_z));
+	// 	camera.y += 0.4*(1/(temp_z));
+    //     look_at();
+	// 	frameNumber++;
+	// }
+
+
+	// ---- UNCOMMENT for soft shadow mirror and glass  animation --- //
+    // vector<ModelTriangle> box = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl",textures));
+	// softShadows = true;
+    // for(int i = 0; i < 10; i++) {
+	// 	rendering(box,focal, planeMultiplyer, textures, lightDirections, window);
+	// 	string name =  to_string(frameNumber);
+	// 	window.savePPM("frames/"+name+".ppm");
+	// 	cout << "saved " << frameNumber << endl;
+	// 	float temp_z = 10-i;
+    //     float temp_x = i+1;
+	// 	camera.z -= 0.2*(1/(temp_x));
+	// 	look_at();
+	// 	frameNumber++;
+	// }
+    
+    // ----  UNCOMMENT for hard shadow ray trace dynamic animation --- //
+    vector<ModelTriangle> TMRbox = load_obj("models/cornell-box.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
+	rendering = draw_raytrace;
+	for(int i = 0; i < 40; i++) {
+		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
 		string name =  to_string(frameNumber);
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
-		float temp_z = 20-i;
+		float temp_z = 40-i;
         float temp_x = i+1;
-		camera.z -= 0.3*(1/(temp_x));
+		camera.z -= 0.3*(1/(temp_z));
+		camera.x -= 0.2*(1/(temp_x));
+        camera.y += 0.007;
+		look_at();
+		frameNumber++;
+	}
+    for(int i = 0; i < 40; i++) {
+		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+		string name =  to_string(frameNumber);
+		window.savePPM("frames/"+name+".ppm");
+		cout << "saved " << frameNumber << endl;
+		float temp_z = 40-i;
+        float temp_x = i+1;
+
+		camera.z -= 0.4*(1/(temp_x));
+		camera.x -= 0.003;
+        camera.y += 0.007;
 
 		look_at();
 		frameNumber++;
 	}
-    for(int i = 0; i < 20; i++) {
-		rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+
+    for(int i = 0; i < 40; i++) {
+		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
 		string name =  to_string(frameNumber);
-        lighting = gouraurd;
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
-		float temp_z = 20-i;
+		float temp_z = 40-i;
         float temp_x = i+1;
-		camera.x -= 0.2*(1/(temp_x));
-		camera.y -= 0.2*(1/(temp_x));
+
+		camera.z -= 0.4*(1/(temp_z));
+        camera.y += 0.007;
+
+		look_at();
 		frameNumber++;
 	}
-     for(int i = 0; i < 20; i++) {
-		rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
+
+     for(int i = 0; i < 40; i++) {
+		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
 		string name =  to_string(frameNumber);
-        lighting = phong;
 		window.savePPM("frames/"+name+".ppm");
 		cout << "saved " << frameNumber << endl;
-		float temp_z = 20-i;
+		float temp_z = 40-i;
         float temp_x = i+1;
-		camera.x += 0.2*(1/(temp_z));
-		camera.y += 0.2*(1/(temp_z));
-		frameNumber++;
-	}
-    for(int i = 0; i < 20; i++) {
-		rendering(bunnybox,focal, planeMultiplyer, textures, lightDirections, window);
-		string name =  to_string(frameNumber);
-        lighting = phong;
-		window.savePPM("frames/"+name+".ppm");
-		cout << "saved " << frameNumber << endl;
-		float temp_z = 20-i;
-        float temp_x = i+1;
-		camera.x += 0.4*(1/(temp_z));
-		camera.y += 0.4*(1/(temp_z));
-        look_at();
-		frameNumber++;
-	}
-    
-    // // ----  UNCOMMENT for ray trace TMRbox + soft shadows animation --- //
-    // vector<ModelTriangle> TMRbox = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl",textures));
-	// rendering = draw_raytrace;
-	// softShadows = true;
-	// for(int i = 0; i < 40; i++) {
-	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
-	// 	window.savePPM("frames/"+name+".ppm");
-	// 	cout << "saved " << frameNumber << endl;
-	// 	float temp_z = 40-i;
-    //     float temp_x = i+1;
-	// 	camera.z -= 0.3*(1/(temp_z));
-	// 	camera.x -= 0.2*(1/(temp_x));
-    //     camera.y += 0.007;
-	// 	look_at();
-	// 	frameNumber++;
-	// }
-    // for(int i = 0; i < 40; i++) {
-	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
-	// 	window.savePPM("frames/"+name+".ppm");
-	// 	cout << "saved " << frameNumber << endl;
-	// 	float temp_z = 40-i;
-    //     float temp_x = i+1;
-
-	// 	camera.z -= 0.4*(1/(temp_x));
-	// 	camera.x -= 0.003;
-    //     camera.y += 0.007;
-
-	// 	look_at();
-	// 	frameNumber++;
-	// }
-
-    // for(int i = 0; i < 40; i++) {
-	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
-	// 	window.savePPM("frames/"+name+".ppm");
-	// 	cout << "saved " << frameNumber << endl;
-	// 	float temp_z = 40-i;
-    //     float temp_x = i+1;
-
-	// 	camera.z -= 0.4*(1/(temp_z));
-    //     camera.y += 0.007;
-
-	// 	look_at();
-	// 	frameNumber++;
-	// }
-
-    //  for(int i = 0; i < 40; i++) {
-	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
-	// 	window.savePPM("frames/"+name+".ppm");
-	// 	cout << "saved " << frameNumber << endl;
-	// 	float temp_z = 40-i;
-    //     float temp_x = i+1;
         
-	// 	camera.x += 0.2*(1/(temp_z));
+		camera.x += 0.2*(1/(temp_z));
 
-	// 	look_at();
-	// 	frameNumber++;
-	// }
+		look_at();
+		frameNumber++;
+	}
 
-    // for(int i = 0; i < 40; i++) {
-	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
-	// 	window.savePPM("frames/"+name+".ppm");
-	// 	cout << "saved " << frameNumber << endl;
-	// 	float temp_z = 40-i;
-    //     float temp_x = i+1;
+    for(int i = 0; i < 40; i++) {
+		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+		string name =  to_string(frameNumber);
+		window.savePPM("frames/"+name+".ppm");
+		cout << "saved " << frameNumber << endl;
+		float temp_z = 40-i;
+        float temp_x = i+1;
 
-	// 	camera.x += 0.1*(1/(temp_x));
+		camera.x += 0.1*(1/(temp_x));
 
-	// 	look_at();
-	// 	frameNumber++;
-	// }
-    // for(int i = 0; i < 40; i++) {
-	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
-	// 	window.savePPM("frames/"+name+".ppm");
-	// 	cout << "saved " << frameNumber << endl;
-	// 	float temp_z = 40-i;
-    //     float temp_x = i+1;
+		look_at();
+		frameNumber++;
+	}
+    for(int i = 0; i < 40; i++) {
+		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+		string name =  to_string(frameNumber);
+		window.savePPM("frames/"+name+".ppm");
+		cout << "saved " << frameNumber << endl;
+		float temp_z = 40-i;
+        float temp_x = i+1;
 
-    //     camera.y -= 0.01*(1/(temp_z));
-	// 	camera.x += 0.1*(1/(temp_z));
+        camera.y -= 0.01*(1/(temp_z));
+		camera.x += 0.1*(1/(temp_z));
 
-	// 	look_at();
-	// 	frameNumber++;
-	// }
+		look_at();
+		frameNumber++;
+	}
 
-    // for(int i = 0; i < 40; i++) {
-	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
-	// 	window.savePPM("frames/"+name+".ppm");
-	// 	cout << "saved " << frameNumber << endl;
-	// 	float temp_z = 40-i;
-    //     float temp_x = i+1;
+    for(int i = 0; i < 40; i++) {
+		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+		string name =  to_string(frameNumber);
+		window.savePPM("frames/"+name+".ppm");
+		cout << "saved " << frameNumber << endl;
+		float temp_z = 40-i;
+        float temp_x = i+1;
 
-    //     camera.y -= 0.01;
-	// 	camera.z += 0.08;
+        camera.y -= 0.01;
+		camera.z += 0.08;
 
-	// 	look_at();
-	// 	frameNumber++;
-	// }
-    // for(int i = 0; i < 40; i++) {
-	// 	rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
-	// 	string name =  to_string(frameNumber);
-	// 	window.savePPM("frames/"+name+".ppm");
-	// 	cout << "saved " << frameNumber << endl;
-	// 	float temp_z = 40-i;
-    //     float temp_x = i+1;
+		look_at();
+		frameNumber++;
+	}
 
-	// 	camera.z += 0.4*(1/temp_x);
-    //     camera.x -= 0.2*(1/(temp_x));
+    for(int i = 0; i < 40; i++) {
+		rendering(TMRbox,focal, planeMultiplyer, textures, lightDirections, window);
+		string name =  to_string(frameNumber);
+		window.savePPM("frames/"+name+".ppm");
+		cout << "saved " << frameNumber << endl;
+		float temp_z = 40-i;
+        float temp_x = i+1;
 
-	// 	look_at();
-	// 	frameNumber++;
-	// }
+		camera.z += 0.4*(1/temp_x);
+        camera.x -= 0.2*(1/(temp_x));
+
+		look_at();
+		frameNumber++;
+	}
 }
 
 int main(int argc, char *argv[]) {
@@ -1171,15 +1194,16 @@ int main(int argc, char *argv[]) {
 
 	// vector<ModelTriangle> t = load_obj("models/logo.obj", 0.002, load_mtl("models/materials.mtl", textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
-	// vector<ModelTriangle> t_sphere = load_obj("models/sphere.obj", 0.4, load_mtl("models/cornell-box.mtl",textures));
-	// vector<ModelTriangle> t_sphere = load_obj("models/high-res-sphere.obj", 0.4, load_mtl("models/cornell-box.mtl",textures));
+
+	// if using sphere please uncomment the sphere camera and sphere light positions at the top of the file.
+	// vector<ModelTriangle> t = load_obj("models/sphere.obj", 0.4, load_mtl("models/cornell-box.mtl",textures));
 
 	// t.insert(t.end(),t_logo.begin(), t_logo.end());
 	// t.insert(t.end(),t_sphere.begin(), t_sphere.end());
     
     cout <<""<<endl;
     cout << "[Rendering Mode]: raytrace"  << endl;
-    cout << "[Lighting]: phong" << endl;
+    cout << "[Lighting]: flat" << endl;
     cout << "[Proximity]: " << proximity << endl;
     cout << "[Angle of Inc]: " << angleOfInc << endl;
     cout << "[Specular]: " << specular << endl;
@@ -1197,6 +1221,7 @@ int main(int argc, char *argv[]) {
 	DrawingWindow window_grey = DrawingWindow(WIDTH, HEIGHT, false);
 	SDL_Event event;
 
+	// --- UNCOMMENT or animation ---- //
 	// animatation(focal, planemultiplyer, lightDirections, window_grey);
 
 	while (true) {
@@ -1206,7 +1231,6 @@ int main(int argc, char *argv[]) {
 		draw(window_grey);
 
         rendering(t, focal, planemultiplyer, textures, lightDirections, window_grey);
-		// rendering(t_sphere, focal, planemultiplyer, textures, lightDirections, window_grey); //sphere only
 
 		// Need to render the frame at the end, or nothing actually gets shown on the screen !
 		window_grey.renderFrame();
