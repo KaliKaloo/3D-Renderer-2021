@@ -339,19 +339,15 @@ float flatShading(RayTriangleIntersection intersect, vec3 l, int scale) {
 	float scale_a = (angleOfInc) ? incidenceLighting(normal, light_ray) : 0;
 	float scale_s = specLighting(reflection_ray, view_ray, scale);
 
-	if(scale_a > 0) {scale_p *= scale_a;
+	if(scale_a > 0) {
+        scale_p *= scale_a;
     }else{
         scale_p *= 0;
     }
 	if(scale_s > 0 && specular) scale_p += scale_s;
     
-    if (scale_p > 1) {
-		scale_p = 1;
-	} 
-	if (scale_p < 0.2) {
-		scale_p = 0.2;
-	}
-
+    if (scale_p > 1) scale_p = 1;
+	if (scale_p < 0.2) scale_p = 0.2;
 	return scale_p ;
 }
 
@@ -386,12 +382,8 @@ float gouraurd(RayTriangleIntersection intersect, vec3 l,int scale) {
 
 	float finalBrightness = (1 - intersect.u - intersect.v) * brightnesses[0] + intersect.u * brightnesses[1] + intersect.v * brightnesses[2];
 
-	if (finalBrightness > 1) {
-		finalBrightness = 1;
-	} 
-	if (finalBrightness < 0.2) {
-		finalBrightness = 0.2;
-	}
+	if (finalBrightness > 1) finalBrightness = 1;
+	if (finalBrightness < 0.2) finalBrightness = 0.2;
 	return finalBrightness;
 }
 
@@ -580,8 +572,6 @@ void draw_raytrace(vector<ModelTriangle> triangles, float focal, int planeMultip
                 colour.red *=  brightness;
                 colour.green *= brightness;
                 colour.blue *=  brightness;
-                
-                
 			}
             if(intersect.isInfinity){
                     colour.red = 0;
@@ -602,7 +592,7 @@ void vertexNormals(vector<ModelTriangle> &triangles) {
 
         for(int v = 0; v < t.vertices.size(); v++) {
             vec3 vertex = t.normal;
-            int count = 1;
+            int counting = 1;
 
             for(int j = 0; j < triangles.size(); j++) {
                 ModelTriangle t2 = triangles[j];
@@ -611,12 +601,12 @@ void vertexNormals(vector<ModelTriangle> &triangles) {
                     if(i != j && t2.vertices[v].x == t2.vertices[u].x && t.vertices[v].y == t2.vertices[u].y && t.vertices[v].z == t2.vertices[u].z) {
                         if (acos(dot(t.normal, t2.normal)/(length(t.normal)*length(t2.normal))) < pi/4) {
 							vertex = vertex + t2.normal;
-							count++;
+							counting++;
 						}
                     }
                 }
             }
-            vertex = vertex / float(count);
+            vertex = vertex / float(counting);
             triangles[i].normals[v] = normalize(vertex);
         }
     }
@@ -729,7 +719,7 @@ unordered_map<string, Colour> load_mtl(string filename, unordered_map<string, Te
 	return colours;
 }
 
-void reset_camera() {
+void reset() {
 	camera = vec3(0.0,0.0,4.0);
 	light = vec3(0.0, 1.0, 2.0);
 	cameraOrientation = mat3(vec3(1.0,0.0,0.0),vec3(0.0,1.0,0.0),vec3(0.0,0.0,1.0));
@@ -815,10 +805,9 @@ void handleEvent(SDL_Event event, DrawingWindow &window) {
 		else if (event.key.keysym.sym == SDLK_i)  {
             cameraOrientation =  cameraOrientation*rotation_x( rotVal) ;
         }
-
-		else if (event.key.keysym.sym == SDLK_o) orbiting = (orbiting) ? false : true;
+		else if (event.key.keysym.sym == SDLK_r) reset();
+		else if (event.key.keysym.sym == SDLK_o) orbiting = !orbiting;
 		else if (event.key.keysym.sym == SDLK_l) look_at();
-		else if (event.key.keysym.sym == SDLK_r) reset_camera();
 		else if (event.key.keysym.sym == SDLK_1) { renderMode= 1; cout << "[Rendering Mode]: wireframe" << endl;}
 		else if (event.key.keysym.sym == SDLK_2) { renderMode = 2; cout << "[Rendering Mode]: rasterise" << endl; }
 		else if (event.key.keysym.sym == SDLK_3) { renderMode = 3; cout << "[Rendering Mode]: raytrace" << endl; }
@@ -1175,7 +1164,7 @@ int main(int argc, char *argv[]) {
 	SDL_Event event;
 
 	// --- UNCOMMENT or animation ---- //
-	animatation(focal, planemultiplyer, lightDirections, window_grey);
+	// animatation(focal, planemultiplyer, lightDirections, window_grey);
 
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
@@ -1183,7 +1172,6 @@ int main(int argc, char *argv[]) {
 		orbit(orbiting);
 		draw(window_grey);
 
-        // rendering(t, focal, planemultiplyer, textures, lightDirections, window_grey);
         if(renderMode == 1){
             draw_wireframe(t, focal, planemultiplyer, textures, window_grey);
         }else if(renderMode ==2){
