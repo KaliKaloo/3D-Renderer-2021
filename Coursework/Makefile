@@ -1,5 +1,4 @@
-PROJECT_NAME := animation
-# PROJECT_NAME := main
+PROJECT_NAME := main
 
 
 BUILD_DIR := build

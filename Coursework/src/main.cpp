@@ -1141,9 +1141,9 @@ int main(int argc, char *argv[]) {
     }
 
 	unordered_map<string, TextureMap> textures;
-	// vector<ModelTriangle> t = load_obj("models/cornell-box.obj", 0.5, load_mtl("models/cornell-box.mtl", textures));
+	vector<ModelTriangle> t = load_obj("models/cornell-box.obj", 0.5, load_mtl("models/cornell-box.mtl", textures));
     // vector<ModelTriangle> t = load_obj("models/cornell-box-bunny.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
-	vector<ModelTriangle> t = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
+	// vector<ModelTriangle> t = load_obj("models/cornell-box-texture.obj", 0.5, load_mtl("models/textured-cornell-box.mtl", textures));
 
 	// vector<ModelTriangle> t = load_obj("models/logo.obj", 0.002, load_mtl("models/materials.mtl", textures));
 	// vector<ModelTriangle> t_sphere = load_obj("models/newestsphere.obj", 0.5, load_mtl("models/cornell-box.mtl",textures));
@@ -1175,7 +1175,7 @@ int main(int argc, char *argv[]) {
 	SDL_Event event;
 
 	// --- UNCOMMENT or animation ---- //
-	// animatation(focal, planemultiplyer, lightDirections, window_grey);
+	animatation(focal, planemultiplyer, lightDirections, window_grey);
 
 	while (true) {
 		// We MUST poll for events - otherwise the window will freeze !
